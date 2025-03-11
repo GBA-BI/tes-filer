@@ -1,0 +1,21 @@
+name: Docker Iamge CI for GHCR
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+
+  build_and_publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the push the image
+        run: |
+          docker login --username zhou-jianwen --password ${{ secrets.GH_PAT}} ghcr.io
+          docker build . --file build/Dockerfile --tag ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          docker push ghcr.io/${{ github.repository }}:${{ github.ref_name }}
